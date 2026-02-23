@@ -1,0 +1,16 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: odoo-http-route
+spec:
+  parentRefs:
+  - name: traefik-gateway
+  hostnames: ["odoo.traefik.local"]
+  rules:
+  - matches:
+    - path:
+        type: PathPrefix
+        value: /
+    backendRefs:
+    - name: odoo-service
+      port: 8069

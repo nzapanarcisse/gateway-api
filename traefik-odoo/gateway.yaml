@@ -1,0 +1,15 @@
+# Ceci est la configuration initiale pour l'accès en HTTP.
+# Référez-vous au TUTORIAL.md pour voir comment le faire évoluer en HTTPS.
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: traefik-gateway
+spec:
+  gatewayClassName: traefik-gateway-class
+  listeners:
+  - name: http
+    protocol: HTTP
+    port: 80
+    allowedRoutes:
+      namespaces:
+        from: Same
