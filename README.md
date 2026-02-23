@@ -254,12 +254,13 @@ spec:
 ```
 **Déployez tous ces composants :**
 ```bash
+sudo kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.30/deploy/local-path-storage.yaml
 # Créez les fichiers ci-dessus et appliquez-les
-kubectl apply -f /traefik-odoo/postgres-secret.yaml
-kubectl apply -f /traefik-odoo/postgres-pvc.yaml
-kubectl apply -f /traefik-odoo/postgres-deployment.yaml
-kubectl apply -f /traefik-odoo/odoo-configmap.yaml
-kubectl apply -f /traefik-odoo/odoo-deployment.yaml
+sudo kubectl apply -f traefik-odoo/postgres-secret.yaml
+sudo kubectl apply -f traefik-odoo/postgres-pvc.yaml
+sudo kubectl apply -f traefik-odoo/postgres-statefulset.yaml
+sudo kubectl apply -f traefik-odoo/odoo-configmap.yaml
+sudo kubectl apply -f traefik-odoo/odoo-deployment.yaml
 ```
 
 ### 3. Configuration de la Gateway API (Traefik)
@@ -315,9 +316,9 @@ spec:
 
 **Appliquez ces configurations :**
 ```bash
-kubectl apply -f /traefik-odoo/gateway-class.yaml
-kubectl apply -f /traefik-odoo/gateway.yaml
-kubectl apply -f /traefik-odoo/http-route.yaml
+sudo kubectl apply -f traefik-odoo/gateway-class.yaml
+sudo kubectl apply -f traefik-odoo/gateway.yaml
+sudo kubectl apply -f traefik-odoo/http-route.yaml
 ```
 
 ### 4. Accès en HTTP
@@ -326,7 +327,7 @@ kubectl apply -f /traefik-odoo/http-route.yaml
     La `Gateway` a demandé un LoadBalancer. MetalLB lui a fourni une IP.
 
     ```bash
-    kubectl get svc traefik
+    sudo kubectl get svc traefik
     ```
     Vous verrez une `EXTERNAL-IP`. Copiez-la.
 
