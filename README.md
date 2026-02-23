@@ -1,3 +1,15 @@
+## À Propos de l'Auteur
+
+**Nzapa Narcisse**  
+<span style="color: #FF5722;">Ingénieur DevOps chez Accenture</span>  
+Certifications :
+- <span style="color: #3F51B5;">CKA</span> (Certified Kubernetes Administrator)
+- <span style="color: #3F51B5;">CKAD</span> (Certified Kubernetes Application Developer)
+- <span style="color: #3F51B5;">Java 11</span> Professionnel
+- <span style="color: #3F51B5;">Architecte AWS</span> Professionnel
+
+
+
 # Atelier Pratique : Déployer Odoo sur Kubernetes avec la Gateway API
 
 Bienvenue dans cet atelier pratique ! En tant que futurs experts du Cloud Native, vous allez découvrir comment exposer des applications de manière moderne et standardisée sur Kubernetes. Nous allons laisser de côté l'ancien `Ingress` pour nous plonger dans son successeur : la **Gateway API**.
@@ -21,11 +33,13 @@ La **Gateway API** est une nouvelle spécification qui vise à résoudre ces pro
 Avant de comparer nos deux solutions, nous devons préparer notre cluster.
 
 ### 1. Valider le Cluster
-Assurez-vous que votre cluster Kubernetes (lancé via le `Vagrantfile`) est fonctionnel.
+Assurez-vous que votre cluster Kubernetes (lancé via le `Vagrantfile`) fourni est fonctionnel.
 
 ```bash
 # Cette commande doit lister vos nœuds (master, worker1).
-kubectl get nodes
+vagrant up
+vagrant ssh master
+ sudo kubectl get nodes
 ```
 
 ### 2. Installer les CRDs de la Gateway API
@@ -34,7 +48,7 @@ Les objets `Gateway` et `HTTPRoute` ne sont pas inclus par défaut dans Kubernet
 ```bash
 # Nous appliquons le fichier de configuration standard fourni par la communauté Kubernetes.
 # Cela étend l'API de notre cluster avec les nouveaux types d'objets.
-kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
+ sudo kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.0.0/standard-install.yaml
 ```
 
 ### 3. Installer et Configurer MetalLB
@@ -43,12 +57,12 @@ Dans un environnement Cloud (AWS, GCP, Azure), demander un `Service` de type `Lo
 **Installation :**
 ```bash
 # On applique le manifeste officiel de MetalLB.
-kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
+sudo kubectl apply -f https://raw.githubusercontent.com/metallb/metallb/v0.14.5/config/manifests/metallb-native.yaml
 ```
 
 Attendez que les pods MetalLB soient lancés dans le namespace `metallb-system` :
 ```bash
-kubectl get pods -n metallb-system -w
+sudo kubectl get pods -n metallb-system -w
 ```
 
 **Configuration :**
@@ -94,14 +108,25 @@ Traefik est un reverse-proxy et load-balancer très populaire dans l'écosystèm
 Nous utiliserons Helm, le gestionnaire de paquets pour Kubernetes.
 
 ```bash
+
+# 1. Téléchargement du script d'installation
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+
+# 2. Ajout des permissions d'exécution
+chmod 700 get_helm.sh
+
+# 3. Exécution du script
+sudo ./get_helm.sh
+sudo ln -s /usr/local/bin/helm /usr/bin/helm
 # Ajouter le dépôt Helm de Traefik
-helm repo add traefik https://helm.traefik.io/traefik
+
+sudo helm repo add traefik https://helm.traefik.io/traefik
 
 # Mettre à jour les informations du dépôt
-helm repo update
+sudo helm repo update
 
 # Installer Traefik en activant le support pour la Gateway API
-helm install traefik traefik/traefik \
+sudo helm install traefik traefik/traefik \
   --set providers.kubernetesGateway.enabled=true \
   --set experimental.kubernetesGateway.enabled=true
 ```
@@ -111,7 +136,6 @@ helm install traefik traefik/traefik \
 Nous allons créer tous les fichiers dans un dossier virtuel `/traefik-odoo`.
 
 **Fichiers de déploiement :**
-
 ```yaml
 # /traefik-odoo/postgres-secret.yaml
 apiVersion: v1
@@ -228,7 +252,6 @@ spec:
       port: 8069
       targetPort: 8069
 ```
-
 **Déployez tous ces composants :**
 ```bash
 # Créez les fichiers ci-dessus et appliquez-les
@@ -341,25 +364,25 @@ kubectl apply -f /traefik-odoo/http-route.yaml
     metadata:
       name: traefik-gateway
 spec:
-      gatewayClassName: traefik-gateway-class
-      listeners:
-      - name: http
-        protocol: HTTP
-        port: 80
-        allowedRoutes:
-          namespaces:
-            from: Same
-      - name: https
-        protocol: HTTPS
-        port: 443
-        allowedRoutes:
-          namespaces:
-            from: Same
-        tls:
-          mode: Terminate
-          certificateRefs:
-          - name: traefik-tls-secret
-    ```
+gatewayClassName: traefik-gateway-class
+listeners:
+- name: http
+protocol: HTTP
+port: 80
+allowedRoutes:
+namespaces:
+from: Same
+- name: https
+protocol: HTTPS
+port: 443
+allowedRoutes:
+namespaces:
+from: Same
+tls:
+mode: Terminate
+certificateRefs:
+- name: traefik-tls-secret
+```
 
 4.  **Appliquez la mise à jour :**
     ```bash
@@ -501,25 +524,25 @@ Le processus est identique à celui de Traefik.
     metadata:
       name: nginx-gateway
 spec:
-      gatewayClassName: nginx-gateway-class
-      listeners:
-      - name: http
-        protocol: HTTP
-        port: 80
-        allowedRoutes:
-          namespaces:
-            from: Same
-      - name: https
-        protocol: HTTPS
-        port: 443
-        allowedRoutes:
-          namespaces:
-            from: Same
-        tls:
-          mode: Terminate
-          certificateRefs:
-          - name: nginx-tls-secret
-    ```
+gatewayClassName: nginx-gateway-class
+listeners:
+- name: http
+protocol: HTTP
+port: 80
+allowedRoutes:
+namespaces:
+from: Same
+- name: https
+protocol: HTTPS
+port: 443
+allowedRoutes:
+namespaces:
+from: Same
+tls:
+mode: Terminate
+certificateRefs:
+- name: nginx-tls-secret
+```
 
 4.  **Appliquez la mise à jour :**
     ```bash

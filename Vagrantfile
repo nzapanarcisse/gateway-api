@@ -6,6 +6,7 @@ Vagrant.configure("2") do |config|
       master.vm.box = "eazytrainingfr/centos7"
       master.vm.network "private_network", type: "static", ip: "192.168.99.10"
       master.vm.hostname = "master"
+      config.vm.synced_folder ".", "/vagrant", disabled: true
       master.vm.provider "virtualbox" do |v|
         v.name = "master"
         v.memory = 4096
@@ -24,6 +25,7 @@ Vagrant.configure("2") do |config|
         worker.vm.box = "eazytrainingfr/centos7"
         worker.vm.network "private_network", type: "static", ip: "192.168.99.1#{i}"
         worker.vm.hostname = "worker#{i}"
+        config.vm.synced_folder ".", "/vagrant", disabled: true
         worker.vm.provider "virtualbox" do |v|
           v.name = "worker#{i}"
           v.memory = ram_worker
