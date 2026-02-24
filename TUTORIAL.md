@@ -310,6 +310,8 @@ kubectl apply -f /traefik-odoo/http-route.yaml
 2.  **Modifiez votre fichier `hosts` :**
     Pour que votre machine locale sache que `odoo.traefik.local` pointe vers cette IP.
 
+    **Important :** Cette commande doit être exécutée sur votre **machine hôte** (celle sur laquelle vous avez lancé Vagrant), et non à l'intérieur des VMs Kubernetes. Le fichier `/etc/hosts` de votre machine hôte est utilisé par votre navigateur pour résoudre les noms de domaine. En ajoutant cette entrée, vous indiquez à votre machine hôte que `odoo.traefik.local` doit pointer vers l'IP du LoadBalancer fournie par MetalLB, qui est accessible depuis votre machine hôte via le réseau Vagrant.
+
     ```bash
     # Remplacez <IP_METALLB> par l'IP que vous avez copiée
     echo "<IP_METALLB> odoo.traefik.local" | sudo tee -a /etc/hosts
@@ -470,6 +472,8 @@ kubectl apply -f /nginx-odoo/http-route.yaml
     Copiez l' `EXTERNAL-IP`. Ce sera la même que pour Traefik si vous l'avez désinstallé, ou la suivante dans le pool MetalLB.
 
 2.  **Modifiez votre fichier `hosts` :**
+    **Important :** Comme pour le cas Traefik, cette commande doit être exécutée sur votre **machine hôte** (celle sur laquelle vous avez lancé Vagrant), et non à l'intérieur des VMs Kubernetes.
+
     ```bash
     # Remplacez <IP_METALLB> par la nouvelle IP
     echo "<IP_METALLB> odoo.nginx.local" | sudo tee -a /etc/hosts

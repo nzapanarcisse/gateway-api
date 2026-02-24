@@ -3,6 +3,7 @@ kind: ConfigMap
 metadata:
   name: odoo-config
 data:
-  HOST: postgres-service
-  USER: odoo
-  PASSWORD: mysecretpassword
+  POSTGRES_HOST: postgres-service
+  POSTGRES_USER: odoo
+  POSTGRES_PASSWORD: mysecretpassword
+  POSTGRES_DB: postgres
