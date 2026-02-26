@@ -232,11 +232,11 @@ spec:
 **Déployez tous ces composants :**
 ```bash
 # Créez les fichiers ci-dessus et appliquez-les
-kubectl apply -f /traefik-odoo/postgres-secret.yaml
-kubectl apply -f /traefik-odoo/postgres-pvc.yaml
-kubectl apply -f /traefik-odoo/postgres-deployment.yaml
-kubectl apply -f /traefik-odoo/odoo-configmap.yaml
-kubectl apply -f /traefik-odoo/odoo-deployment.yaml
+kubectl delete -f /traefik-odoo/postgres-secret.yaml
+kubectl delete -f /traefik-odoo/postgres-pvc.yaml
+kubectl delete -f /traefik-odoo/postgres-deployment.yaml
+kubectl delete -f /traefik-odoo/odoo-configmap.yaml
+kubectl delete -f /traefik-odoo/odoo-deployment.yaml
 ```
 
 ### 3. Configuration de la Gateway API (Traefik)
