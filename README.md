@@ -129,6 +129,8 @@ sudo helm repo update
 sudo helm install traefik traefik/traefik \
   --set providers.kubernetesGateway.enabled=true \
   --set experimental.kubernetesGateway.enabled=true
+  
+  kubectl get svc 
 ```
 *Note : La deuxième ligne `experimental.kubernetesGateway.enabled` est nécessaire pour les versions actuelles de Traefik, cela pourrait changer.*
 
@@ -257,7 +259,6 @@ spec:
 sudo kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.30/deploy/local-path-storage.yaml
 # Créez les fichiers ci-dessus et appliquez-les
 sudo kubectl apply -f traefik-odoo/postgres-secret.yaml
-sudo kubectl apply -f traefik-odoo/postgres-pvc.yaml
 sudo kubectl apply -f traefik-odoo/postgres-statefulset.yaml
 sudo kubectl apply -f traefik-odoo/odoo-configmap.yaml
 sudo kubectl apply -f traefik-odoo/odoo-deployment.yaml
